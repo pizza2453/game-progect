@@ -20,7 +20,7 @@ void drawBoard(int width, int height, int x, int y) {
 
 int main() {
     const int width = 20;
-    const int height = 10;
+    const int height = 20;
     int x = width / 2;
     int y = height / 2;
 
