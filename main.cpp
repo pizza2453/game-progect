@@ -1,14 +1,18 @@
 #include <iostream>
 #include <conio.h>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
-void drawBoard(int width, int height, int x, int y) {
+void drawBoard(int width, int height, int x, int y, int targetX, int targetY) {
     system("cls");
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
             if (col == x && row == y) {
                 cout << 'X';
+            } else if (col == targetX && row == targetY) {
+                cout << 'Y';
             } else {
                 cout << '.';
             }
@@ -24,7 +28,15 @@ int main() {
     int x = width / 2;
     int y = height / 2;
 
-    drawBoard(width, height, x, y);
+    srand((unsigned)time(NULL));
+    int targetX = rand() % width;
+    int targetY = rand() % height;
+    while (targetX == x && targetY == y) {
+        targetX = rand() % width;
+        targetY = rand() % height;
+    }
+
+    drawBoard(width, height, x, y, targetX, targetY);
 
     while (true) {
         int key = _getch();
@@ -40,7 +52,15 @@ int main() {
         } else if (key == 'd' || key == 'D') {
             if (x < width - 1) x++;
         }
-        drawBoard(width, height, x, y);
+
+        if (x == targetX && y == targetY) {
+            do {
+                targetX = rand() % width;
+                targetY = rand() % height;
+            } while (targetX == x && targetY == y);
+        }
+
+        drawBoard(width, height, x, y, targetX, targetY);
     }
 
     return 0;
