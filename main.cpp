@@ -2,15 +2,18 @@
 #include <conio.h>
 #include <cstdlib>
 #include <ctime>
+#include <deque>
 
 using namespace std;
 
-void drawBoard(int width, int height, int x, int y, int targetX, int targetY) {
+void drawBoard(int width, int height, int x, int y, int cloneX, int cloneY, int targetX, int targetY) {
     system("cls");
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
             if (col == x && row == y) {
                 cout << 'X';
+            } else if (col == cloneX && row == cloneY) {
+                cout << 'C';
             } else if (col == targetX && row == targetY) {
                 cout << 'Y';
             } else {
@@ -27,6 +30,11 @@ int main() {
     const int height = 20;
     int x = width / 2;
     int y = height / 2;
+    int cloneX = x;
+    int cloneY = y;
+    
+    deque<pair<int, int>> positionHistory;
+    positionHistory.push_back({x, y});
 
     srand((unsigned)time(NULL));
     int targetX = rand() % width;
@@ -36,22 +44,37 @@ int main() {
         targetY = rand() % height;
     }
 
-    drawBoard(width, height, x, y, targetX, targetY);
+    drawBoard(width, height, x, y, cloneX, cloneY, targetX, targetY);
 
     while (true) {
         int key = _getch();
         if (key == 'q' || key == 'Q') {
             break;
         }
+        
+        int newX = x;
+        int newY = y;
+        
         if (key == 'w' || key == 'W') {
-            if (y > 0) y--;
+            if (y > 0) newY--;
         } else if (key == 's' || key == 'S') {
-            if (y < height - 1) y++;
+            if (y < height - 1) newY++;
         } else if (key == 'a' || key == 'A') {
-            if (x > 0) x--;
+            if (x > 0) newX--;
         } else if (key == 'd' || key == 'D') {
-            if (x < width - 1) x++;
+            if (x < width - 1) newX++;
         }
+        
+        // Przesunąć klona na poprzednią pozycję gracza
+        cloneX = x;
+        cloneY = y;
+        
+        // Przesunąć gracza
+        x = newX;
+        y = newY;
+        
+        // Dodać nową pozycję do historii
+        positionHistory.push_back({x, y});
 
         if (x == targetX && y == targetY) {
             do {
@@ -60,7 +83,7 @@ int main() {
             } while (targetX == x && targetY == y);
         }
 
-        drawBoard(width, height, x, y, targetX, targetY);
+        drawBoard(width, height, x, y, cloneX, cloneY, targetX, targetY);
     }
 
     return 0;
